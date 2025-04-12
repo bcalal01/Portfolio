@@ -1,7 +1,7 @@
 Title: HOHLS
 Author: Brendan Calalang
 Date: 12/10/24
-Purpose: Displays a 4-minute animation made of ASCII characters about the monotony of working retail
+Purpose: Displays a 4-minute animation made of ASCII characters about the monotony of the modern condition
 Compile/Run:
   Compile using-
     make HOHLS
