@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<head>
+<style>
+    #canvas_holder {
+        width: fit-content;
+        margin: auto;
+    }
+
+    #stats_holder {
+        width: fit-content;
+        margin: auto;
+    }
+
+    button {
+        font-size: 50px;
+        margin: 0px 20px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .controls {
+        width: fit-content;
+        margin: auto;
+    }
+
+    #border-cover {
+        width: 5px;
+        height: 1200px;
+        position: absolute;
+        background-color: rgb(255, 255, 255);
+        right: 37px;
+    }
+    
+</style>
+</head>
+<html>
+<body>
+<div id="border-cover">
+
+</div>
+<div id="container">
+<div id="canvas_holder">
+    <canvas id="myCanvas" width="900" height="960"></canvas>
+</div>
+<div id="stats_holder">
+    <canvas id="stats_canvas" width="900" height="215"></canvas>
+</div>
+<div id="controls1" class="controls">
+    <button onclick="start()">Send Email</button>
+    <button onclick="eat()">Eat</button>
+    <button onclick="consume()">Consume</button>
+</div>
+<div id="controls2" class="controls">
+    <button onclick="nap()">Rest</button>
+    <button onclick="shop()">Shop</button>
+    <button onclick="gamble()">Gamble</button>
+</div>
+
+</div>
+
+<script>
+
+const main_canvas = document.getElementById("myCanvas")
+const ctx = main_canvas.getContext("2d");
+const stats = document.getElementById("stats_canvas").getContext("2d");
+const base = new Image();
+base.src = "images/base.jpg";
+const comp = new Image();
+comp.src = "images/comp.jpg";
+const blink = new Image();
+blink.src = "images/blink.jpg";
+const eat0 = new Image();
+eat0.src = "images/eat0.jpg";
+const eat1 = new Image();
+eat1.src = "images/eat1.jpg";
+const eat2 = new Image();
+eat2.src = "images/eat2.jpg";
+const eat3 = new Image();
+eat3.src = "images/eat3.jpg";
+const eat4 = new Image();
+eat4.src = "images/eat4.jpg";
+const eat5 = new Image();
+eat5.src = "images/eat5.jpg";
+const consume1 = new Image();
+consume1.src = "images/consume1.jpg";
+const consume2 = new Image();
+consume2.src = "images/consume2.jpg";
+const consume3 = new Image();
+consume3.src = "images/consume3.jpg";
+const consume4 = new Image();
+consume4.src = "images/consume4.jpg";
+const consume5 = new Image();
+consume5.src = "images/consume5.jpg";
+const consume6 = new Image();
+consume6.src = "images/consume6.jpg";
+const consume7 = new Image();
+consume7.src = "images/consume7.jpg";
+const consume8 = new Image();
+consume8.src = "images/consume8.jpg";
+const dead = new Image();
+dead.src = "images/dead.jpg";
+const shop1 = new Image;
+shop1.src = "images/shop1.jpg";
+const shop2 = new Image;
+shop2.src = "images/shop2.jpg";
+const gamble1 = new Image();
+gamble1.src = "images/gamble1.jpg";
+const gamble2 = new Image();
+gamble2.src = "images/gamble2.jpg";
+const gamble3 = new Image();
+gamble3.src = "images/gamble3.jpg";
+const gamble4 = new Image();
+gamble4.src = "images/gamble4.jpg";
+const gamblewin = new Image();
+gamblewin.src = "images/gamblewin.jpg";
+const gamblelose = new Image();
+gamblelose.src = "images/gamblelose.jpg";
+const messages = [[["Hello ", "Diane", ", ", "", ""], [""], ["Per ", "my ", "last ", "email", ", ", "I ", "had ", "concerns ", "regarding"], ["our ", "quarterly ", "presentation", ".", "", ""], ["Please ", "message ", "me ", "back", "."]],
+                    [["Hello ", "Brian", ",", "", ""], [""], ["I ", "need ", "those ", "reports ", "by ", "EOD ", "ASAP ", "PLS "], ["TYSM ", "TTYL ", "ILY", "."]],
+                    [["Hello ", "Mike", ",", "", ""], [""], ["Were ", "you ", "free ", "to ", "chat ", "tomorrow ", "at ", "noon", "?"]],
+                    [["Hi ", "Gilbert", ",", "", ""], [""], ["Please ", "do ", "not ", "reply ", "to ", "all", ".", "", ""], [""], ["Thank ", "you", "."]],
+                    [["Hello ", "Barbara", ",", "", ""], [""], ["Can ", "you ", "push ", "the ", "newest ", "version ", "of ", "the"], ["code ", "to ", "the ", "repo", "?"]],
+                    [["Hello", ",", "", ""], [""], ["I ", "will ", "be ", "out ", "of ", "office ", "from ", "May ", "1st ", "to ", "May "], ["3rd", ". ", "", "", "Please ", "expect ", "a ", "delay ", "in ", "response", "."]],
+                    [["Hey ", "baby", ",", "", ""], [""], ["I ", "miss ", "you ", "so ", "bad ", "<3 ", "", "", "I'm ", "so- ", "", ""], ["Oh ", "crap", ". ", "", "", "This ", "is ", "my ", "work ", "email", "."]],
+                    [["Hi ", "John", ",", "", ""], [""], ["No", ", ", "", "I ", "haven't ", "seen ", "the ", "report", ". ", "", "", "I ", "will ", "take ", "a"], ["look ", "now", "."]],
+                    [["Hello ", "Debby", ",", "", ""], [""], ["I'm ", "still ", "waiting ", "on ", "Brian ", "for ", "the ", "reports", ". ", "", "", "I'll"], ["let ", "you ", "know ", "when ", "I ", "get ", "them", "."]],
+                    [["Hello ", "Jim", ",", "", ""], [""], ["I ", "just ", "wanted ", "to ", "let ", "you ", "that ", "I've ", "reported"], ["the ", "\"fart ", "incident\" ",  "to ", "HR", "."]],
+                    [["Hello ", "Margaret", ",", "", ""], [""], ["I ", "believe ", "I ", "may ", "have ", "opened ", "a ", "phishing"], ["email", ", ", "", "and ", "now ", "my ", "browser ", "is ", "all ", "in ", "French", ".", "", ""], ["Aidez-", "moi", ", ", "s'il ", "vous ", "plait", "."]],
+                    [["Hello ", "Karen", ",", "", ""], [""], ["I'm ", "meeting ", "with ", "Mike ", "tomorrow ", "at ", "noon", ",", ""], ["but ", "I'm ", "free ", "to ", "talk ", "before ", "then", "."]],
+                    [["Hello ", "Keith", ",", "", ""], [""], ["Did ", "you ", "get ", "a ", "chance ", "to ", "look ", "at ", "the"], ["changes ", "I ", "made ", "to ", "the ", "doc", "?"]],
+                    [["Hello ", "Angela", ",", "", ""], [""], ["Earlier ", "today", ", ", "", "Jim ", "farted ", "on ", "my ", "sandwich"], ["in ", "the ", "breakroom", "."]],
+                    [["Hello ", "Amanda", ",", "", ""], [""], ["Please ", "disregard ", "my ", "previous ", "email", "."]],
+                    [["Hello ", "Bill", ",", "", ""], [""], ["Yes", ", ", "", "thank ", "you ", "so ", "much", "."]],
+                    [["Hello ", "Olivia", ",", "", ""], [""], ["I ", "noticed ", "some ", "concerning ", "trends ", "in ", "Q2"], ["engagement", ". ", "", "", "We ", "may ", "need ", "to ", "adjust ", "some "], ["of ", "our ", "models", "."]],
+                    [["Hello ", "Anthony", ",", "", ""], [""], ["Your ", "absence ", "in ", "today's ", "all-", "hands ", "meeting"], ["has ", "been ", "recorded", "."]],
+                    [["Hello ", "Patricia", ",", "", ""], [""], ["No", ", ", "", "I ", "was ", "not ", "aware ", "of ", "that ", "policy", ".", "", ""]],
+                    [["Hello ", "Candace", ",", "", ""], [""], ["Please ", "proofread ", "all ", "emails", ".", "", ""], ["Typos ", "make ", "us ", "seem ", "unproffessional", "."]],
+                    [["Hello ", "Kylie", ",", "", ""], [""], ["4:30 ", "P.M. ", "would ", "be ", "ideal", "."]],
+                    [["Hello ", "Cher", ",", "", ""], [""], ["Do ", "you ", "believe ", "in ", "life ", "after ", "love", "?", "", ""], [""], ["Please ", "let ", "me ", "know ", "by ", "EOD", "."]]];
+
+const emails = messages.length;
+
+const bar_ratio = 4;
+const bar_height = 50;
+
+const speed = 30;
+let working = false;
+
+var curr_email;
+let emails_sent = 0;
+
+var interval;
+
+let shop_happiness = 15;
+let consume_happiness = 12;
+
+
+let health = 50;
+let happiness = 50;
+let performance = 50;
+let money = 50;
+let stop = 0;
+let kill = false;
+
+let screen_width = window.screen.width;
+var image_width;
+var line_height;
+var clear_height;
+
+stats.font = "40px serif";
+
+base.addEventListener("load", () => {
+    initialize_mobile();
+    curr_email = Math.floor(Math.random() * emails);
+    //curr_email = emails - 1;
+    ctx.drawImage(base,0,100,image_width, image_width);
+    display_stats();
+    setInterval(blinkcycle, 4000);
+    console.log(screen_width);
+    ctx.fillText("Help Barry send emails and keep him alive!", 10, 85);
+
+});
+
+function initialize_desktop() {
+    image_width = 600;
+    main_canvas.width = 600;
+    ctx.font = "32px serif";
+    line_height = 32;
+    clear_height = 200;
+    document.getElementById('canvas_holder').style.display = "inline-block";
+    document.getElementById('stats_holder').style.display = "inline-block";
+    document.getElementById('container').style.display = "flex";
+}
+
+function initialize_mobile() {
+    image_width = 900;
+    ctx.font = "50px serif";
+    line_height = 50;
+    clear_height = 260;
+}
+
+function blinkcycle() {
+    if (!working) {
+        ctx.drawImage(blink,0,100,image_width, image_width);
+        setTimeout(function() {ctx.drawImage(base,0,100,image_width, image_width)}, 50);
+    }
+}
+
+function shop() {
+    if (!working) {
+        working = true;
+        ctx.clearRect(0, 0, 900, clear_height);
+        update_stats(-7, 0, shop_happiness, -20);
+        shop_happiness *= .75;
+        setTimeout(function() {ctx.drawImage(shop1,0,100,image_width, image_width)}, 50);
+        setTimeout(function() {ctx.drawImage(shop2,0,100,image_width, image_width)}, 200);
+        setTimeout(function() {ctx.drawImage(blink,0,100,image_width, image_width)}, 1500);
+        setTimeout(function() {
+            ctx.drawImage(base,0,100,image_width, image_width);
+            display_stats();}, 1550);
+        if (!kill) {
+            setTimeout(function() {working = false}, 1650);
+        }
+    }
+}
+
+function gamble() {
+    if (!working) {
+        working = true;
+        ctx.clearRect(0, 0, 900, clear_height);
+        let gamble_result = Math.floor(Math.random() * 4);
+        if (gamble_result % 2 == 0) {
+            update_stats(-7, -2, 10, 15);
+        } else {
+            update_stats(-7, -2, -10, -15);
+        }
+        setTimeout(function() {ctx.drawImage(gamble1,0,100,image_width, image_width)}, 50);
+        setTimeout(function() {ctx.drawImage(gamble2,0,100,image_width, image_width)}, 250);
+        setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 300);
+        setTimeout(function() {ctx.drawImage(gamble4,0,100,image_width, image_width)}, 350);
+        setTimeout(function() {ctx.drawImage(gamble1,0,100,image_width, image_width)}, 450);
+        setTimeout(function() {ctx.drawImage(gamble2,0,100,image_width, image_width)}, 550);
+        setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 650);
+        setTimeout(function() {ctx.drawImage(gamble4,0,100,image_width, image_width)}, 800);
+        setTimeout(function() {ctx.drawImage(gamble1,0,100,image_width, image_width)}, 950);
+        setTimeout(function() {ctx.drawImage(gamble2,0,100,image_width, image_width)}, 1100);
+        setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 1250);
+        setTimeout(function() {ctx.drawImage(gamble4,0,100,image_width, image_width)}, 1450);
+        setTimeout(function() {ctx.drawImage(gamble1,0,100,image_width, image_width)}, 1650);
+        setTimeout(function() {ctx.drawImage(gamble2,0,100,image_width, image_width)}, 1850);
+        if (gamble_result == 1) {
+            setTimeout(function() {ctx.drawImage(gamblelose,0,100,image_width, image_width)}, 2350);
+            setTimeout(function() {
+                ctx.drawImage(base,0,100,image_width, image_width);
+                display_stats(); 
+            }, 2850);
+            if (!kill) {
+                setTimeout(function() {working = false}, 3000);
+            }
+        } else if (gamble_result == 2) {
+            setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 2050);
+            setTimeout(function() {ctx.drawImage(gamblewin,0,100,image_width, image_width)}, 2550);
+            setTimeout(function() {
+                ctx.drawImage(base,0,100,image_width, image_width);
+                display_stats(); 
+            }, 3050);
+            if (!kill) {
+                setTimeout(function() {working = false}, 3200);
+            }
+        } else if (gamble_result == 3) {
+            setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 2050);
+            setTimeout(function() {ctx.drawImage(gamble4,0,100,image_width, image_width)}, 2250);
+            setTimeout(function() {ctx.drawImage(gamblelose,0,100,image_width, image_width)}, 2750);
+            setTimeout(function() {
+                ctx.drawImage(base,0,100,image_width, image_width);
+                display_stats(); 
+            }, 3250);
+            if (!kill) {
+                setTimeout(function() {working = false}, 3400);
+            }
+        } else if (gamble_result == 0) {
+            setTimeout(function() {ctx.drawImage(gamble3,0,100,image_width, image_width)}, 2050);
+            setTimeout(function() {ctx.drawImage(gamble4,0,100,image_width, image_width)}, 2250);
+            setTimeout(function() {ctx.drawImage(gamble1,0,100,image_width, image_width)}, 2450);
+            setTimeout(function() {ctx.drawImage(gamblewin,0,100,image_width, image_width)}, 2950);
+            setTimeout(function() {
+                ctx.drawImage(base,0,100,image_width, image_width);
+                display_stats(); 
+            }, 3450);
+            if (!kill) {
+                setTimeout(function() {working = false}, 3600);
+            }
+        }
+    }
+}
+
+function consume() {
+    if (!working) {
+        working = true;
+        ctx.clearRect(0, 0, 900, clear_height);
+        update_stats(-12, -2, consume_happiness, -5);
+        consume_happiness *= .75;
+        setTimeout(function() {ctx.drawImage(consume1,0,100,image_width, image_width)}, 50);
+        setTimeout(function() {ctx.drawImage(consume2,0,100,image_width, image_width)}, 200);
+        setTimeout(function() {ctx.drawImage(consume3,0,100,image_width, image_width)}, 350);
+        setTimeout(function() {ctx.drawImage(consume4,0,100,image_width, image_width)}, 500);
+        setTimeout(function() {ctx.drawImage(consume5,0,100,image_width, image_width)}, 650);
+        setTimeout(function() {ctx.drawImage(consume6,0,100,image_width, image_width)}, 800);
+        setTimeout(function() {ctx.drawImage(consume7,0,100,image_width, image_width)}, 950);
+        setTimeout(function() {ctx.drawImage(consume8,0,100,image_width, image_width)}, 1100);
+
+        setTimeout(function() {
+            ctx.drawImage(base,0,100,image_width, image_width);
+            display_stats();}, 1250);
+        if (!kill) {
+            setTimeout(function() {working = false}, 1400);
+        }
+    }
+}
+
+function nap() {
+    if (!working) {
+        working = true;
+        ctx.clearRect(0, 0, 900, clear_height);
+        update_stats(-14, 8, 2, 0);
+
+        ctx.drawImage(blink,0,100,image_width, image_width);
+        setTimeout(function() {ctx.drawImage(blink,0,100,image_width, image_width)}, 400);
+        setTimeout(function() {ctx.fillText("Z", 400, 250);}, 500);
+        setTimeout(function() {ctx.fillText("Z Z", 400, 250);}, 1000);
+        setTimeout(function() {ctx.fillText("Z Z Z", 400, 250);}, 1500);
+        setTimeout(function() {ctx.drawImage(base,0,100,image_width, image_width)}, 2000);
+        setTimeout(function() {ctx.drawImage(blink,0,100,image_width, image_width)}, 2050);
+        setTimeout(function() {
+            ctx.drawImage(base,0,100,image_width, image_width);
+            display_stats();
+        }, 2100);
+        if (!kill) {
+            setTimeout(function() {working = false}, 2500);
+        }
+    }
+}
+
+function win() {
+    console.log("You won");
+}
+
+function eat() {
+    if (!working) {
+        working = true;
+        ctx.clearRect(0, 0, 900, clear_height);
+        update_stats(-4, 6, 2, -5);
+        setTimeout(function() {ctx.drawImage(eat0,0,100,image_width, image_width)}, 0);
+        setTimeout(function() {ctx.drawImage(eat1,0,100,image_width, image_width)}, 500);
+        setTimeout(function() {ctx.drawImage(eat2,0,100,image_width, image_width)}, 700);
+        setTimeout(function() {ctx.drawImage(eat3,0,100,image_width, image_width)}, 900);
+        setTimeout(function() {ctx.drawImage(eat4,0,100,image_width, image_width)}, 1100);
+        setTimeout(function() {ctx.drawImage(eat5,0,100,image_width, image_width)}, 1300);
+        setTimeout(function() {ctx.drawImage(blink,0,100,image_width, image_width)}, 1500);
+        setTimeout(function() {
+            ctx.drawImage(base,0,100,image_width, image_width);
+            display_stats();}, 1550);
+        if (!kill) {
+            setTimeout(function() {working = false}, 1900);
+        }
+    }
+}
+
+function update_stats(performance_d, health_d, happiness_d, money_d) {
+    performance += performance_d;
+    if (performance > 100) {
+            performance = 100;
+    } else if (performance <= 0) {
+        performance = 0;
+        stop = 1;
+    }
+    health += health_d;
+    if (health > 100) {
+            health = 100;
+    } else if (health <= 0) {
+        health = 0;
+        stop = 2;
+    }
+    happiness += happiness_d;
+    if (happiness > 100) {
+            happiness = 100;
+    } else if (happiness <= 0) {
+        happiness = 0;
+        stop = 3;
+    }
+    money += money_d;
+    if (money > 100) {
+            money = 100;
+    } else if (money <= 0) {
+        money = 0;
+        stop = 4;
+    }
+    if (stop != 0) {
+        kill = true;
+    }
+    if (emails_sent == emails) {
+        win();
+    }
+}
+
+function start() {
+    if (!working) {
+        working = true;
+        emails_sent++;
+        ctx.drawImage(comp,0,100,image_width, image_width);
+        ctx.clearRect(0, 0, 900, clear_height);
+        setTimeout(email, 500);
+    }
+}
+
+function email() {
+  //let message_num = emails - 1;
+  let curr_message = messages[curr_email % emails];
+  curr_email++;
+  let word_num = 0;
+  let line_num = 0; 
+  let lines = curr_message.length;
+  let message = "";
+  interval = setInterval(type, 140);
+
+  function type() {
+        let words = curr_message[line_num].length;
+        message += curr_message[line_num][word_num];
+        let y_position = line_height * (line_num + 1);
+        //ctx.clearRect(0, 0, 900, 300);
+        ctx.fillText(message, 10, y_position);
+        word_num++;
+        if (word_num == words) {
+            line_num++;
+            word_num = 0;
+            message = "";
+        }
+        if (word_num == 0 && line_num == lines) {
+            clearInterval(interval);
+            setTimeout(stop_typing, 1200);
+        }
+    }
+}
+
+function stop_typing() {
+    ctx.clearRect(0, 0, 900, clear_height);
+    ctx.drawImage(blink,0,100,image_width, image_width);
+    update_stats(10, -3, -9, 5);
+    display_stats();
+    if (!kill) {
+        setTimeout(function() {ctx.drawImage(base,0,100,image_width, image_width)}, 50);
+        setTimeout(function() {working = false}, 200);
+    }
+}
+
+function death_message(death) {
+    working = true;
+
+    if (death == 1) {
+        ctx.fillText("He didn't send enough emails and he got", 15, 50)
+        ctx.fillText("fired.", 15, 100)
+    }
+
+    if (death == 2) {
+        ctx.fillText("He died of poor health.", 15, 85)
+    }
+
+    if (death == 3) {
+        ctx.fillText("He died from a sad, miserable existence.", 15, 85);
+    }
+
+    if (death == 4) {
+        ctx.fillText("He died of poverty.", 15, 85);
+    }
+}
+
+function display_stats() {
+    stats.fillText("Emails:", 25, 50);
+    stats.clearRect(25, 60, 100 * bar_ratio, bar_height);
+    stats.beginPath();
+    stats.rect(25, 60, 100 * bar_ratio, bar_height);
+    stats.stroke();
+    stats.fillRect(25, 60, performance * bar_ratio, bar_height);
+
+    stats.fillText("Health:", 25, 150);
+    stats.clearRect(25, 160, 100 * bar_ratio, bar_height);
+    stats.beginPath();
+    stats.rect(25, 160, 100 * bar_ratio, bar_height);
+    stats.stroke();
+    stats.fillRect(25, 160, health * bar_ratio, bar_height);
+
+    stats.fillText("Money:", 460, 50);
+    stats.clearRect(460, 60, 100 * bar_ratio, bar_height);
+    stats.beginPath();
+    stats.rect(460, 60, 100 * bar_ratio, bar_height);
+    stats.stroke();
+    stats.fillRect(460, 60, money * bar_ratio, bar_height);
+
+    stats.fillText("Happiness:", 460, 150);
+    stats.clearRect(460, 160, 100 * bar_ratio, bar_height);
+    stats.beginPath();
+    stats.rect(460, 160, 100 * bar_ratio, bar_height);
+    stats.stroke();
+    stats.fillRect(460, 160, happiness * bar_ratio, bar_height);
+
+    if (kill) {
+        death_message(stop);
+        ctx.drawImage(dead,0,100,image_width, image_width);
+    }
+}
+
+
+
+</script>
+
+</body>
+</html>
