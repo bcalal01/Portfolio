@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PixelSpace</title>
+    <style>
+        canvas {
+            display: block;
+            width: 100%;
+            margin: auto;
+            border: solid black;
+        }
+
+    </style>
+  </head>
+  <body>
+    <main>
+        <input type="radio" id="poolMode" name="mode" value="pool">
+        <label for="pool">Pool</label>
+        <input type="radio" id="dropletsMode" name="mode" value="droplets">
+        <label for="droplets">Droplets</label>
+        <input type="radio" id="corridorsMode" name="mode" value="corridors">
+        <label for="corridors">Corridors</label>
+
+        <br>
+        <button id="changeMode">Change Mode</button>
+        <button id="spawnBird">Bird</button>
+
+        <script src="p5.js"></script>
+        <script src="millet.js"></script>
+    </main>
+  </body>
+</html>
